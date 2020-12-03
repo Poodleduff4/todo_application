@@ -6,8 +6,19 @@ void menu(void);
 int read_file(FILE *);
 int write_file(FILE *);
 
+struct Node
+{
+    char data[100];
+    struct Node *next;
+};
+
+void add_list(int, struct Node *);
+void read_list();
+struct Node *head = NULL;
 int main(int argc, char *argv[])
 {
+    head = (struct Node *)malloc(sizeof(struct Node));
+    strcpy(head->data, "head");
     if (argc < 2)
     {
         fprintf(stderr, "filename not provided\n");
@@ -56,16 +67,46 @@ void menu(void)
     printf("1. read\n2. write\n");
 }
 
-int read_file(FILE* file)
+int read_file(FILE *file)
 {
-    char line[100];
-    fscanf(file, "%[^\n]", line);
-    printf("Data from the file:\n%s", line);
+    char chars[100];
+    fscanf(file, "%[^\n]", chars);
+    printf("Data from the file:\n%s\n", chars);
+    static struct Node *line = NULL;
+    line = (struct Node *)malloc(sizeof(struct Node));
+    strcpy(line->data, chars);
+    read_list();
+    add_list(-1, line);
+    read_list();
+    printf("gay\n");
 }
 
-int write_file(FILE* file)
+int write_file(FILE *file)
 {
+}
 
+void add_list(int position, struct Node *add)
+{
+    printf("add\n");
+    struct Node *current = NULL;
+    int i = 0;
+    for (current = head; current->next != NULL; current = current->next, i++)
+    {
+        printf("%d\n", i);
+    }
+    current->next = add;
+}
+
+void read_list()
+{
+    printf("read\n");
+    struct Node *current = NULL;
+    int i = 0;
+    for (current = head; current != NULL; current = current->next, i++)
+    {
+        printf("%s  %d\n", current->data, i);
+    }
+    printf("done");
 }
 
 /* notes:
