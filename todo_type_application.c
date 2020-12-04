@@ -12,8 +12,9 @@ struct Node
     struct Node *next;
 };
 
-void add_list(int, struct Node *);
+void add_list(int, char[]);
 void read_list();
+void printList();
 struct Node *head = NULL;
 int main(int argc, char *argv[])
 {
@@ -72,12 +73,10 @@ int read_file(FILE *file)
     char chars[100];
     fscanf(file, "%[^\n]", chars);
     printf("Data from the file:\n%s\n", chars);
-    static struct Node *line = NULL;
-    line = (struct Node *)malloc(sizeof(struct Node));
-    strcpy(line->data, chars);
+    printf("chars: %s\n", chars);
     read_list();
-    add_list(-1, line);
-    read_list();
+    add_list(-1, chars);
+    printList(head);
     printf("gay\n");
 }
 
@@ -85,16 +84,19 @@ int write_file(FILE *file)
 {
 }
 
-void add_list(int position, struct Node *add)
+void add_list(int position, char data[100])
 {
+    struct Node *add = NULL;
+    add = (struct Node *)malloc(sizeof(struct Node));
+    strcpy(add->data, data);
     printf("add\n");
-    struct Node *current = NULL;
-    int i = 0;
-    for (current = head; current->next != NULL; current = current->next, i++)
+    struct Node *last = head;
+    while (last->next != NULL)
     {
-        printf("%d\n", i);
+        last = last->next;
     }
-    current->next = add;
+    last->next = add;
+    
 }
 
 void read_list()
@@ -104,10 +106,20 @@ void read_list()
     int i = 0;
     for (current = head; current != NULL; current = current->next, i++)
     {
-        printf("%s  %d\n", current->data, i);
+        printf("%s  %d\n", current, i);
     }
     printf("done");
 }
+
+void printList() 
+{ 
+    struct Node* n = head;
+    while (n != NULL) { 
+        printf("%s\n", n->data); 
+        n = n->next; 
+    } 
+    printf("done");
+} 
 
 /* notes:
 Henlo, welcome to gay file reader.exe
