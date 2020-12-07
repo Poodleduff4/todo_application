@@ -1,1 +1,30 @@
-ok
+C:\Users\Luke\Documents\C++ crap\todo_application>gcc todo_type_application.c Node.c -Wall -Wpedantic
+Node.c: In function 'LL_add':
+Node.c:18:17: warning: initialization of 'Node *' {aka 'struct node_st *'} from incompatible pointer type 'Node **' {aka 'struct node_st **'} [-Wincompatible-pointer-types]
+   18 |     Node *tmp = list_p;
+      |                 ^~~~~~
+
+C:\Users\Luke\Documents\C++ crap\todo_application>a notes.txt
+Henlo, welcome to gay file reader.exe
+1. read
+2. write
+1
+gay
+made node
+copied
+Made temp
+gay2
+linetalsak is gay af
+
+read
+head  0
+done
+start addend addread
+head  0
+talsak is gay af
+  1
+done
+gay
+made node
+copied
+Made temp

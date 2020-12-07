@@ -1,25 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "Node.h"
 
 void menu(void);
 int read_file(FILE *);
-int write_file(FILE *);
+void write_file(FILE *);
 
-struct Node
+/*
+typedef struct item_st
 {
-    char data[100];
-    struct Node *next;
-};
+    char data[MAX_LEN];
 
-void add_list(int, char[]);
+} Item;
+
+typedef struct node_st2
+{
+    Item note;
+    struct node_st2 *next;
+} Node;
+*/
+void add_list(int, Node*);
 void read_list();
-void printList();
-struct Node *head = NULL;
+
+Node *head = NULL;
+List tmp_list;
+
 int main(int argc, char *argv[])
 {
-    head = (struct Node *)malloc(sizeof(struct Node));
-    strcpy(head->data, "head");
+    LL_init(&tmp_list);
+
     if (argc < 2)
     {
         fprintf(stderr, "filename not provided\n");
@@ -33,6 +43,9 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Cannot open file");
         exit(EXIT_FAILURE);
     }
+
+    head = (Node *) malloc(sizeof(Node));
+    strcpy(head->note.data, "head");
 
     char menu_selection;
     menu();
@@ -70,56 +83,52 @@ void menu(void)
 
 int read_file(FILE *file)
 {
-    char chars[100];
-    fscanf(file, "%[^\n]", chars);
-    printf("Data from the file:\n%s\n", chars);
-    printf("chars: %s\n", chars);
-    read_list();
-    add_list(-1, chars);
-    printList(head);
-    printf("gay\n");
+    char chars[MAX_LEN];
+    while (fgets(chars, MAX_LEN, file) != NULL)
+    {
+        printf("\ngay\n");
+        LL_add(chars, &tmp_list);
+        printf("gay2\n");
+        Node * new = (Node* )malloc(sizeof(Node));
+        printf("line: %s\n", chars);
+        strcpy(new->note.data, chars);
+        // read_list();
+        add_list(-1, new);
+        // read_list();
+    }
+    LL_print(&tmp_list);
+    printf("out");
+    return 0;
 }
 
-int write_file(FILE *file)
+void add_list(int position, Node* add)
 {
-}
-
-void add_list(int position, char data[100])
-{
-    struct Node *add = NULL;
-    add = (struct Node *)malloc(sizeof(struct Node));
-    strcpy(add->data, data);
-    printf("add\n");
-    struct Node *last = head;
+    printf("start add");
+    Node *last = head;
     while (last->next != NULL)
     {
         last = last->next;
     }
     last->next = add;
-    
+    printf("end add");
 }
 
 void read_list()
 {
     printf("read\n");
-    struct Node *current = NULL;
+    Node *current = NULL;
     int i = 0;
     for (current = head; current != NULL; current = current->next, i++)
     {
-        printf("%s  %d\n", current, i);
+        printf("%s  %d\n", current->note.data, i);
     }
-    printf("done");
+    printf("done\n");
 }
 
-void printList() 
-{ 
-    struct Node* n = head;
-    while (n != NULL) { 
-        printf("%s\n", n->data); 
-        n = n->next; 
-    } 
-    printf("done");
-} 
+void write_file(FILE *file)
+{
+
+}
 
 /* notes:
 Henlo, welcome to gay file reader.exe
