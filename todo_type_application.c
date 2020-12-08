@@ -9,7 +9,7 @@
 
 void menu(void);
 int parse_file(FILE *);
-void write_file(FILE *);
+void write_file(char *);
 int add_item(void);
 
 /*
@@ -74,9 +74,9 @@ int main(int argc, char *argv[])
 
         case '3':
             /* exiting  */
-            write_file(main_file);
-            LL_febreeze(&tmp_list);
             fclose(main_file);
+            write_file(argv[1]);
+            LL_febreeze(&tmp_list);
             exit(EXIT_SUCCESS);
             /* TODO: run valgrind to check    */
             break;
@@ -121,6 +121,7 @@ int parse_file(FILE *file)
     while (fgets(chars, MAX_LEN, file) != NULL)
     {
         //printf("\ngay\n");
+        /* remove newline from fgets    */
         LL_add(chars, &tmp_list);
         //printf("gay2\n");
         //LL_print(&tmp_list);
@@ -141,10 +142,17 @@ int add_item(void)
     LL_add(buf, &tmp_list);
 }
 
-void write_file(FILE *file)
+void write_file(char * name)
 {
     Node *current = NULL;
-    file = freopen(NULL, "w+", file); /* check back on later? */
+    
+    FILE * file = fopen(name, "w+"); /* check back on later? */
+    
+    if (file == NULL)
+    {
+        printf(" ");
+    }
+
     for (current = tmp_list; current != NULL; current = current->next)
     {
         /* add header/tag/whatever 'note:'  */
