@@ -1,30 +1,81 @@
-C:\Users\Luke\Documents\C++ crap\todo_application>gcc todo_type_application.c Node.c -Wall -Wpedantic
-Node.c: In function 'LL_add':
-Node.c:18:17: warning: initialization of 'Node *' {aka 'struct node_st *'} from incompatible pointer type 'Node **' {aka 'struct node_st **'} [-Wincompatible-pointer-types]
-   18 |     Node *tmp = list_p;
-      |                 ^~~~~~
+tmp_list is never changed from NULL it always points to NULL
+
 
 C:\Users\Luke\Documents\C++ crap\todo_application>a notes.txt
 Henlo, welcome to gay file reader.exe
 1. read
 2. write
 1
-gay
-made node
-copied
-Made temp
-gay2
-linetalsak is gay af
 
-read
-head  0
-done
-start addend addread
-head  0
-talsak is gay af
-  1
-done
+gay             read_file()
+made node       LL_add()
+copied          LL_add()
+Made temp       LL_add()
+test            LL_add()
+ayo             LL_add()
+gay2            read_file()
+line: talsak is gay af          read_file()
+
+
 gay
 made node
 copied
 Made temp
+for (; tmp->next != NULL; tmp = tmp->next)
+    |--> never makes it into for loop because tmp->next is NULL on first run
+
+
+
+
+
+
+
+    C:\Users\Luke\Documents\C++ crap\todo_application>a notes.txt
+Henlo, welcome to gay file reader.exe
+1. read 
+2. write
+1
+
+gay      
+made node
+copied
+Made temp
+ayo
+gay2
+line: talsak is gay af
+
+start_print
+end_print
+
+gay
+made node
+copied
+Made temp
+test
+test
+//////////////////
+C:\Users\Luke\Documents\C++ crap\todo_application>gcc todo_type_application.c Node.c -Wall -Wpedantic
+
+C:\Users\Luke\Documents\C++ crap\todo_application>a notes.txt
+Henlo, welcome to gay file reader.exe
+1. read
+2. write
+1
+
+gay
+gay2
+line: talsak is gay af
+
+start_print
+talsak is gay af
+
+end_print
+
+gay
+gay2
+line: ayo that's big facts
+start_print
+talsak is gay af
+ayo that's big facts
+end_print
+out

@@ -1,11 +1,16 @@
+#include "Node.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Node.h"
+#include <stddef.h>
+#include <stdbool.h>
+#include <time.h>
 
 void menu(void);
-int read_file(FILE *);
+int parse_file(FILE *);
 void write_file(FILE *);
+int add_item(void);
 
 /*
 typedef struct item_st
@@ -20,10 +25,11 @@ typedef struct node_st2
     struct node_st2 *next;
 } Node;
 */
-void add_list(int, Node*);
+void add_list(int, Node *);
 void read_list();
 
 Node *head = NULL;
+
 List tmp_list;
 
 int main(int argc, char *argv[])
@@ -38,68 +44,123 @@ int main(int argc, char *argv[])
 
     FILE *main_file;
 
-    if ((main_file = fopen(argv[1], "r+")) == NULL)
+    if ((main_file = fopen(argv[1], "r")) == NULL)
     {
         fprintf(stderr, "Cannot open file");
         exit(EXIT_FAILURE);
     }
 
-    head = (Node *) malloc(sizeof(Node));
+    head = (Node *)malloc(sizeof(Node));
     strcpy(head->note.data, "head");
 
     char menu_selection;
-    menu();
-    scanf(" %c", &menu_selection);
 
-    switch (menu_selection)
+    while (1)
     {
-    case '1':
-        read_file(main_file);
-        break;
+        menu();
+        scanf(" %c", &menu_selection);
+        while (getchar() != '\n')
+            ;
 
-    default:
-        break;
+        switch (menu_selection)
+        {
+        case '1':
+            parse_file(main_file);
+            break;
 
-    case '2':
-        write_file(main_file);
+        case '2':
+            LL_print(&tmp_list);
+            break;
+
+        case '3':
+            /* exiting  */
+            write_file(main_file);
+            LL_febreeze(&tmp_list);
+            fclose(main_file);
+            exit(EXIT_SUCCESS);
+            /* TODO: run valgrind to check    */
+            break;
+
+        case '4':
+            /* add item */
+            add_item();
+            break;
+
+        case '5':;
+            int pos;
+            printf("delete which:");
+            scanf("%d", &pos);
+            LL_delete(pos, &tmp_list);
+            break;
+
+        default:
+            break;
+        }
+        /*
+        todo-application file.gay
+
+            
+                -> open file.gay
+                -> 3 options:
+                    -> read
+                    -> write
+                        -> timestamp
+        */
     }
-    /*
-    todo-application file.gay
-
-        
-            -> open file.gay
-            -> 3 options:
-                -> read
-                -> write
-                    -> timestamp
-*/
 }
 
 void menu(void)
 {
     printf("Henlo, welcome to gay file reader.exe\n");
-    printf("1. read\n2. write\n");
+    printf("1. parse file\n2. output items\n3. exit\n4. add item\n5. delete item\nchoice: ");
 }
 
-int read_file(FILE *file)
+int parse_file(FILE *file)
 {
     char chars[MAX_LEN];
     while (fgets(chars, MAX_LEN, file) != NULL)
     {
-        printf("\ngay\n");
+        //printf("\ngay\n");
         LL_add(chars, &tmp_list);
-        printf("gay2\n");
-        Node * new = (Node* )malloc(sizeof(Node));
-        printf("line: %s\n", chars);
-        strcpy(new->note.data, chars);
+        //printf("gay2\n");
+        //LL_print(&tmp_list);
         // read_list();
-        add_list(-1, new);
+        // add_list(-1, new);
         // read_list();
     }
-    LL_print(&tmp_list);
-    printf("out");
+    // LL_print(&tmp_list);
+    printf("items parsed: %zd\n\n", LL_num(&tmp_list));
+    //printf("out");
     return 0;
 }
+
+int add_item(void)
+{
+    char buf[MAX_LEN];
+    fgets(buf, MAX_LEN, stdin);
+    LL_add(buf, &tmp_list);
+}
+
+void write_file(FILE *file)
+{
+    Node *current = NULL;
+    file = freopen(NULL, "w+", file); /* check back on later? */
+    for (current = tmp_list; current != NULL; current = current->next)
+    {
+        /* add header/tag/whatever 'note:'  */
+        fprintf(file, "%s", current->note.data);
+    }
+}
+
+/* notes:
+Henlo, welcome to gay file reader.exe
+1. read
+2. write
+3
+
+*/
+
+/* old code:
 
 void add_list(int position, Node* add)
 {
@@ -124,16 +185,4 @@ void read_list()
     }
     printf("done\n");
 }
-
-void write_file(FILE *file)
-{
-
-}
-
-/* notes:
-Henlo, welcome to gay file reader.exe
-1. read
-2. write
-3
-
 */
