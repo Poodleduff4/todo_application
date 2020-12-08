@@ -142,15 +142,15 @@ int add_item(void)
     LL_add(buf, &tmp_list);
 }
 
-void write_file(char * name)
+void write_file(char *name)
 {
     Node *current = NULL;
-    
-    FILE * file = fopen(name, "w+"); /* check back on later? */
-    
+
+    FILE *file = fopen(name, "w+"); /* check back on later? */
+
     if (file == NULL)
     {
-        printf(" ");
+        printf("problem with file ");
     }
 
     for (current = tmp_list; current != NULL; current = current->next)
