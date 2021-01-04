@@ -9,26 +9,9 @@
 
 void menu(void);
 int parse_file(FILE *);
-void write_file(char *);
-int add_item(void);
-
-/*
-typedef struct item_st
-{
-    char data[MAX_LEN];
-
-} Item;
-
-typedef struct node_st2
-{
-    Item note;
-    struct node_st2 *next;
-} Node;
-*/
-void add_list(int, Node *);
-void read_list();
-
-Node *head = NULL;
+void write_file(char *, FILE *);
+void user_add_item(void);
+char *nnlfget(char *, int, FILE *);
 
 List tmp_list;
 
@@ -61,6 +44,7 @@ int main(int argc, char *argv[])
         scanf(" %c", &menu_selection);
         while (getchar() != '\n')
             ;
+        putchar('\n');
 
         switch (menu_selection)
         {
@@ -74,8 +58,8 @@ int main(int argc, char *argv[])
 
         case '3':
             /* exiting  */
+            write_file(argv[1], main_file);
             fclose(main_file);
-            write_file(argv[1]);
             LL_febreeze(&tmp_list);
             exit(EXIT_SUCCESS);
             /* TODO: run valgrind to check    */
@@ -83,7 +67,7 @@ int main(int argc, char *argv[])
 
         case '4':
             /* add item */
-            add_item();
+            user_add_item();
             break;
 
         case '5':;
@@ -93,60 +77,129 @@ int main(int argc, char *argv[])
             LL_delete(pos, &tmp_list);
             break;
 
+        case '6':
+            /* sort items -- start with sorting the date (numerical is easier)  */
+            /* not sorting in place as that would lose the original order of the linked list    */
+
         default:
             break;
         }
-        /*
-        todo-application file.gay
-
-            
-                -> open file.gay
-                -> 3 options:
-                    -> read
-                    -> write
-                        -> timestamp
-        */
     }
 }
 
 void menu(void)
 {
-    printf("Henlo, welcome to gay file reader.exe\n");
-    printf("1. parse file\n2. output items\n3. exit\n4. add item\n5. delete item\nchoice: ");
+    printf("\nHenlo, welcome to gay file reader.exe\n");
+    printf("1. parse file\n2. output items\n3. exit\n4. add item\n5. delete item\n6. sort by date\nchoice: ");
 }
 
 int parse_file(FILE *file)
 {
-    char chars[MAX_LEN];
-    while (fgets(chars, MAX_LEN, file) != NULL)
+    char chars[MAX_LEN]; /* tmp buffer  */
+
+    char note[MAX_LEN];
+    char tag[MAX_TAG_LEN];
+    char date[MAX_DATE];
+    int count = LL_num(&tmp_list);
+    while (nnlfget(chars, MAX_LEN, file) != NULL)
     {
-        //printf("\ngay\n");
-        /* remove newline from fgets    */
-        LL_add(chars, &tmp_list);
-        //printf("gay2\n");
-        //LL_print(&tmp_list);
-        // read_list();
-        // add_list(-1, new);
-        // read_list();
+        if (strcmp(chars, "ITEM") == 0) // maybe don't need
+        {
+            puts("new item");
+            if (nnlfget(chars, MAX_LEN, file) != NULL)
+            {
+                strcpy(note, chars);
+            }
+
+            if (nnlfget(chars, MAX_TAG_LEN, file) != NULL)
+            {
+                strcpy(tag, chars);
+            }
+            puts("before date");
+            if (nnlfget(chars, MAX_DATE, file) != NULL)
+            {
+                strcpy(date, chars);
+            }
+            puts("After date");
+
+            if (strcmp(nnlfget(chars, MAX_LEN, file), "ENDITEM") != 0)
+            {
+                fprintf(stderr, "dsomritng");
+            }
+            puts("after end");
+        }
+        LL_add(note, tag, date, &tmp_list);
     }
-    // LL_print(&tmp_list);
-    printf("items parsed: %zd\n\n", LL_num(&tmp_list));
-    //printf("out");
+    printf("items parsed: %zd\n\n", LL_num(&tmp_list) - count);
     return 0;
 }
 
-int add_item(void)
+void user_add_item(void)
 {
     char buf[MAX_LEN];
-    fgets(buf, MAX_LEN, stdin);
-    LL_add(buf, &tmp_list);
+    char data[MAX_LEN];
+    char tag[MAX_TAG_LEN];
+    char date[MAX_DATE];
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+
+    printf("enter the data:");
+    if (nnlfget(buf, MAX_LEN, stdin) == NULL)
+    {
+        fprintf(stderr, "something went wrong with adding that string");
+        return; /* treat as fatal   */
+    }
+    strcpy(data, buf);
+
+    printf("enter the tag (enter for none)");
+    if (nnlfget(buf, MAX_LEN, stdin) == NULL || *buf == '\n')
+    {
+        strcpy(tag, "none");
+    }
+    else
+    {
+        strcpy(tag, buf);
+    }
+    sprintf(date, "%d:%d:%d", tm->tm_mday, tm->tm_mon + 1, tm->tm_year + 1900);
+
+    LL_add(data, tag, date, &tmp_list);
 }
 
-void write_file(char *name)
+char *nnlfget(char *str, int up_to, FILE *input_stream)
+{
+    char *tmp = fgets(str, up_to, input_stream);
+    int index = 0;
+
+    if (tmp) /* not NULL (read something)    */
+    {
+        while (str[index] != '\n' && str[index] != '\0') /* find the end of input (either newline or null character) */
+        {
+            index++;
+        }
+        puts("here");
+        if (str[index] == '\n') /* if the whole input was read (meaning that there is a newline at the end) */
+        {
+            str[index] = '\0'; /* get rid of newline   */
+        }
+        else
+        {
+            char c = fgetc(input_stream);
+            puts("infite loop");
+            while (c != '\n' && c != EOF) /* some input was skipped so read the rest of the input in the buffer   */
+            {
+                c = fgetc(input_stream);
+            }
+        }
+    }
+    puts("talsak gay");
+    return tmp;
+}
+
+void write_file(char *name, FILE *main_file)
 {
     Node *current = NULL;
 
-    FILE *file = fopen(name, "w+"); /* check back on later? */
+    FILE *file = freopen(name, "w+", main_file); /* check back on later? */
 
     if (file == NULL)
     {
@@ -155,8 +208,9 @@ void write_file(char *name)
 
     for (current = tmp_list; current != NULL; current = current->next)
     {
-        /* add header/tag/whatever 'note:'  */
-        fprintf(file, "%s", current->note.data);
+        fprintf(file, "ITEM\n");
+        fprintf(file, "%s\n%s\n%s\n", current->note.data, current->note.tag, current->note.date);
+        fprintf(file, "ENDITEM\n");
     }
 }
 

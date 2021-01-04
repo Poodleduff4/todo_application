@@ -9,11 +9,14 @@
 #include <time.h>
 
 #define MAX_LEN 50
+#define MAX_TAG_LEN 10
+#define MAX_DATE 11
 
 typedef struct item_st
 {
     char data[MAX_LEN];
-    time_t creation_time;
+    char tag[MAX_TAG_LEN];
+    char date[MAX_DATE];
 
 } Item;
 
@@ -27,7 +30,7 @@ typedef Node *List;
 
 void LL_init(List *list_p);
 
-_Bool LL_add(char *note, List *list_p);
+_Bool LL_add(char *note, char *tag, char *date, List *list_p);
 
 void LL_print(List *list_p);
 
@@ -36,5 +39,7 @@ _Bool LL_delete(int position, List *list_p);
 size_t LL_num(List *list_p);
 
 void LL_febreeze(List *list_p);
+
+void LL_sort_tag(List *list_p);
 
 #endif
