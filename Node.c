@@ -99,10 +99,200 @@ _Bool LL_delete(int position, List *list_p)
     return true;
 }
 
-void LL_sort_tag(List *list_p)
+Node *LL_get_pos(List *list_p, int pos)
 {
-    /* not sorting the array directly in place   */
-    /* problem because if this is out of place then */
+
+    if (pos < 0)
+    {
+        fprintf(stderr, "tried to access negative index\n");
+        exit(1); /* treat as fatal   */
+    }
+
+    /* if (pos > LL_num(list_p))
+    {
+        fprintf(stderr, "out of bounds access\n");
+        exit(1); /* treat as fatal   
+}
+*/
+    printf("pos (int) = %d\n", pos);
+    Node *tmp = *list_p;
+    for (int i = 0; tmp != NULL && i < (pos + 1); i++, tmp = tmp->next)
+    {
+        printf("i = %d\n", i);
+    }
+
+    return tmp;
+}
+
+/* 
+for i = 1 to end-1:
+    int j = i - 1;
+    current = LL_get_pos(i);
+    prev_position = LL_get_pos(j);
+    while (j >= 0 && prev_position.date > current.date):
+        prev_position
+        swap prev, pos
+        
+        prev_position--;
+    
+
+0 1 2 prev pos 5 6
+       ^ j 
+prev > pos
+
+0 1 2 5 6
+
+2.next [prev.before or ] = pos
+pos.next = prev
+prev.next = 5
+
+*/
+void LL_sort_date(List *list_p)
+{
+    int size_of_list = LL_num(list_p);
+    int i = 1;
+    int j;
+    Node *curr;
+    Node *prev;
+
+    for (; i < size_of_list - 1; i++)
+    {
+        j = i - 1;
+        curr = LL_get_pos(list_p, i);
+        prev = LL_get_pos(list_p, j);
+        printf("in for %d\n", size_of_list);
+        while (j >= 0 && compare_dates(prev->note.date, curr->note.date) > 0)
+        {
+            puts("in while");
+            LL_swap(list_p, LL_get_pos(list_p, j), LL_get_pos(list_p, j + 1), j);
+            j--;
+        }
+    }
+}
+
+void LL_swap(List *list_p, Node *prev, Node *pos, int first_pos)
+{
+    printf("pos %s\n", pos->note.date);
+    printf("prev %s\n", prev->note.date);
+    printf("list_p %s\n", (*list_p)->note.date);
+    printf("\n\n\n\nfirst item %s\n", (*list_p)->note.date);
+    printf("second item %s\n", (*list_p)->next->note.date);
+    printf("thrid item %s\n", (*list_p)->next->next->note.date);
+    if ((*list_p)->next->next->next == NULL)
+    {
+        puts("4th item is NULL");
+    }
+    //  exit(1);
+    if (first_pos == 0)
+    {
+        printf("mem loc of prev: %p, mem loc of pos: %p\n", prev, pos);
+        printf("memloc of list_p: %p\n", *list_p);
+        pos->next = *list_p;
+        (*list_p)->next = LL_get_pos(list_p, first_pos + 2);
+
+        //pos->next = tmp;
+        // prev->next = LL_get_pos(list_p, first_pos + 2); // should be returning 22:12:2020
+        printf("mem loc of prev: %p, mem loc of pos: %p\n", prev, pos);
+
+        printf("first item %s\n", (*list_p)->note.date);
+        printf("second item %s\n", (*list_p)->next->note.date);
+        printf("thrid item %s\n", (*list_p)->next->next->note.date);
+        // printf("4th item %s\n", (*list_p)->next->next->next);
+
+        printf((prev->next)->note.date);
+    }
+    else
+    {
+        Node *wall_left = LL_get_pos(list_p, first_pos - 1);
+        printf("left wall = %d, right wall = %d\n", first_pos - 1, first_pos + 2);
+        wall_left->next = pos;
+        pos->next = prev;
+        prev->next = LL_get_pos(list_p, first_pos + 2);
+    }
+    printf("after swap");
+}
+
+int compare_dates(char *date1, char *date2)
+{
+    char piss1[5];
+    char piss2[5];
+    int num1, num2;
+
+    if (strcmp(date1, date2) == 0)
+    {
+        puts("identical");
+        return 0;
+    }
+
+    //year
+    for (int i = 6; i < 11; i++)
+    {
+        piss1[i - 6] = date1[i];
+        piss2[i - 6] = date2[i];
+    }
+    num1 = atoi(piss1);
+    num2 = atoi(piss2);
+    printf("%d, %d\n", num1, num2);
+
+    if (num1 != num2)
+    {
+        if (atoi(piss1) > atoi(piss2))
+        {
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+    //month
+    int i = 3;
+    for (; i < 5; i++)
+    {
+        piss1[i - 3] = date1[i];
+        piss2[i - 3] = date2[i];
+    }
+    piss1[2] = '\0';
+    piss2[2] = '\0';
+
+    num1 = atoi(piss1);
+    num2 = atoi(piss2);
+    printf("%d, %d\n", num1, num2);
+
+    if (num1 != num2)
+    {
+        if (atoi(piss1) > atoi(piss2))
+        {
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+    //day
+    for (int i = 0; i < 2; i++)
+    {
+        piss1[i] = date1[i];
+        piss2[i] = date2[i];
+    }
+    num1 = atoi(piss1);
+    num2 = atoi(piss2);
+    printf("%d, %d\n", num1, num2);
+
+    if (num1 != num2)
+    {
+        if (atoi(piss1) > atoi(piss2))
+        {
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
+    }
 }
 
 size_t LL_num(List *list_p)
@@ -111,6 +301,7 @@ size_t LL_num(List *list_p)
     Node *tmp;
     for (tmp = *list_p; tmp != NULL; tmp = tmp->next)
     {
+        printf("ayo");
         count++;
     }
     // printf("%zd \n", count);

@@ -33,9 +33,6 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    head = (Node *)malloc(sizeof(Node));
-    strcpy(head->note.data, "head");
-
     char menu_selection;
 
     while (1)
@@ -48,15 +45,38 @@ int main(int argc, char *argv[])
 
         switch (menu_selection)
         {
-        case '1':
+        case 'p':
             parse_file(main_file);
             break;
 
-        case '2':
+        case 'l':
             LL_print(&tmp_list);
             break;
 
-        case '3':
+        case 'a':
+            /* add item */
+            user_add_item();
+            break;
+
+        case 'd':;
+            int pos;
+            printf("delete which:");
+            scanf("%d", &pos);
+            LL_delete(pos, &tmp_list);
+            break;
+
+        case 's':;
+            /* sort items -- start with sorting the date (numerical is easier)  */
+            /* not sorting in place as that would lose the original order of the linked list    */
+            // LL_sort_date(&tmp_list);
+            // LL_print(&tmp_list);
+            //printf("tmp list date = %s\n", tmp_list->note.date);
+            //printf("tmp_list->next date = %s\n", tmp_list->next->note.date);
+            //printf("tmp_list->next->next date = %s\n", tmp_list->next->next->note.date);
+            LL_swap(&tmp_list, tmp_list, tmp_list->next, 0);
+            break;
+
+        case 'e':
             /* exiting  */
             write_file(argv[1], main_file);
             fclose(main_file);
@@ -64,22 +84,6 @@ int main(int argc, char *argv[])
             exit(EXIT_SUCCESS);
             /* TODO: run valgrind to check    */
             break;
-
-        case '4':
-            /* add item */
-            user_add_item();
-            break;
-
-        case '5':;
-            int pos;
-            printf("delete which:");
-            scanf("%d", &pos);
-            LL_delete(pos, &tmp_list);
-            break;
-
-        case '6':
-            /* sort items -- start with sorting the date (numerical is easier)  */
-            /* not sorting in place as that would lose the original order of the linked list    */
 
         default:
             break;
@@ -90,7 +94,7 @@ int main(int argc, char *argv[])
 void menu(void)
 {
     printf("\nHenlo, welcome to gay file reader.exe\n");
-    printf("1. parse file\n2. output items\n3. exit\n4. add item\n5. delete item\n6. sort by date\nchoice: ");
+    printf("p: (p)arse file       l: (l)ist items       a: (a)dd item       d: (d)elete item       s: (s)ort by date       e: (e)xit\nChoice: ");
 }
 
 int parse_file(FILE *file)
@@ -151,7 +155,7 @@ void user_add_item(void)
     }
     strcpy(data, buf);
 
-    printf("enter the tag (enter for none)");
+    printf("enter the tag (enter for none):");
     if (nnlfget(buf, MAX_LEN, stdin) == NULL || *buf == '\n')
     {
         strcpy(tag, "none");
@@ -160,7 +164,15 @@ void user_add_item(void)
     {
         strcpy(tag, buf);
     }
-    sprintf(date, "%d:%d:%d", tm->tm_mday, tm->tm_mon + 1, tm->tm_year + 1900);
+
+    if (tm->tm_mon < 10)
+    {
+        sprintf(date, "%d:0%d:%d", tm->tm_mday, tm->tm_mon + 1, tm->tm_year + 1900);
+    }
+    else
+    {
+        sprintf(date, "%d:%d:%d", tm->tm_mday, tm->tm_mon + 1, tm->tm_year + 1900);
+    }
 
     LL_add(data, tag, date, &tmp_list);
 }
@@ -176,7 +188,6 @@ char *nnlfget(char *str, int up_to, FILE *input_stream)
         {
             index++;
         }
-        puts("here");
         if (str[index] == '\n') /* if the whole input was read (meaning that there is a newline at the end) */
         {
             str[index] = '\0'; /* get rid of newline   */
@@ -184,14 +195,12 @@ char *nnlfget(char *str, int up_to, FILE *input_stream)
         else
         {
             char c = fgetc(input_stream);
-            puts("infite loop");
             while (c != '\n' && c != EOF) /* some input was skipped so read the rest of the input in the buffer   */
             {
                 c = fgetc(input_stream);
             }
         }
     }
-    puts("talsak gay");
     return tmp;
 }
 

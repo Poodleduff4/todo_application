@@ -1,5 +1,57 @@
-ITEM
-cs_italy //note
-test //tag
-//time//
-ENDITEM
+Least->Greatest
+[1, 2, 0.5, 4, 3, 7]
+ 0  1   2  3  4
+i = 1;
+j = (i-1) = 0;
+ [\0\] > [\1\] = 1 < 2:
+    ..
+[1] > [2] = 0.5 < 2:            j = 2;
+    [1] = [2]
+    [2] = [1] } end of while    j-- i=1
+    1 < 0.5
+    [1, 0.5, 2 ....]
+    [0] > [1] = 0.5 < 1;
+    [0] = [1]
+    [1] = [0]
+
+[0.5, 1, 2,DDDDD 4, 3, 7] j = i-1
+i = 3;
+j = 2;
+    [3] > [2] = 4 > 2:
+        ..
+
+
+i = 4;
+j = 3;
+[0.5, 1, 2, 4,-2, 7] j = i-1
+    [4] > [3] = 3 < 4:
+        [3] = [4]
+        [4] = [3]
+        [0.5, 1, 2, -2, 4]
+        [0.5, 1, -2, 2, 4]
+        [0.5, 1, -2, 2, 4]
+
+Node *current
+Node *position;
+Node *prev_position
+
+for i = 1 to end-1:
+    int j = i - 1;
+    current = LL_get_pos(i);
+    prev_position = LL_get_pos(j);
+    while (j >= 0 && prev_position.date > current.date):
+        prev_position
+        swap prev, pos
+        
+        prev_position--;
+
+
+0 1 2 prev pos 5 6
+       ^ j 
+prev > pos
+
+0 1 2 5 6
+
+2.next [prev.before or ] = pos
+pos.next = prev
+prev.next = 5

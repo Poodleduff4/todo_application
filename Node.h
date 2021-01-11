@@ -40,6 +40,13 @@ size_t LL_num(List *list_p);
 
 void LL_febreeze(List *list_p);
 
-void LL_sort_tag(List *list_p);
+void LL_sort_date(List *list_p);
+
+void LL_swap(List *list_p, Node *prev, Node *pos, int first_pos);
+
+Node *LL_get_pos(List *list_p, int pos);
+
+
+int compare_dates(char *date1, char *date2);
 
 #endif
