@@ -224,7 +224,7 @@ void write_file(char *name, FILE *main_file)
 }
 
 /* notes:
-Henlo, welcome to gay file reader.exe
+Henlo, welcome to file reader.exe
 1. read
 2. write
 3
