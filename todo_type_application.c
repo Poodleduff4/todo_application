@@ -222,38 +222,3 @@ void write_file(char *name, FILE *main_file)
         fprintf(file, "ENDITEM\n");
     }
 }
-
-/* notes:
-Henlo, welcome to file reader.exe
-1. read
-2. write
-3
-
-*/
-
-/* old code:
-
-void add_list(int position, Node* add)
-{
-    printf("start add");
-    Node *last = head;
-    while (last->next != NULL)
-    {
-        last = last->next;
-    }
-    last->next = add;
-    printf("end add");
-}
-
-void read_list()
-{
-    printf("read\n");
-    Node *current = NULL;
-    int i = 0;
-    for (current = head; current != NULL; current = current->next, i++)
-    {
-        printf("%s  %d\n", current->note.data, i);
-    }
-    printf("done\n");
-}
-*/
